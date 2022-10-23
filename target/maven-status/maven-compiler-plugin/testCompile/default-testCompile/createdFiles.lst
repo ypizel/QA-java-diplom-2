@@ -1,0 +1,7 @@
+CreateUserOnlyWithAllFieldsTest.class
+LoginWithWrongEmailOrPasswordTest.class
+GetOrderTest.class
+BaseApiTest.class
+ChangeUserDataTest.class
+CreateUserTest.class
+LoginTest.class
