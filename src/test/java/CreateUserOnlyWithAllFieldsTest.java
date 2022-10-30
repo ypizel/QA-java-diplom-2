@@ -1,44 +1,56 @@
+import io.qameta.allure.Step;
 import io.qameta.allure.junit4.DisplayName;
+import io.restassured.response.ValidatableResponse;
 import jdk.jfr.Description;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import static io.restassured.RestAssured.*;
-import static org.hamcrest.Matchers.*;
+import user.User;
+import user.UserClient;
+
+import static constanst.Messages.NOT_ENOUGH_DATA;
+import static org.apache.http.HttpStatus.SC_FORBIDDEN;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
-public class CreateUserOnlyWithAllFieldsTest extends BaseApiTest {
+public class CreateUserOnlyWithAllFieldsTest {
 
-    private final String json;
-    private int statusCode = 403;
-    private final String message = "Email, password and name are required fields";
+    private User user;
+    private UserClient userClient;
 
-    public CreateUserOnlyWithAllFieldsTest(String json) {
-        this.json = json;
-
-
+    public CreateUserOnlyWithAllFieldsTest(User user) {
+        this.user = user;
+    }
+    @Before
+    @Step("Инициализация userClient")
+    public  void setUser() {
+        userClient = new UserClient();
     }
 
     @Parameterized.Parameters(name = "Тестовые данные: {index}")
-    public static Object[][] getData(){
-        return new Object[][] {
+    @Step("Подготовка тестовых данных")
+    public static Object[][] getData() {
+        return new Object[][]{
                 // не имейла
-                {"{\"password\": \"1234\",\"firstName\": \"Yo\"}"},
+                {User.getWithoutEmail()},
                 // нет пароля
-                {"{\"login\": \"Lebowski\",\"firstName\": \"Yo\"}"},
+                {User.getWithoutEmail()},
                 // нет имени
-                {"{\"login\": \"Lebowski\",\"password\": \"1234\"}"}
+                {User.getWithoutName()}
         };
     }
 
     @Test
     @DisplayName("Создание без одного из обязательных полей")
-    @Description("Проверка что при POST-запросе по ручке /api/auth/register возвращается код 403 и в BODY ответа \"message\":\"Email, password and name are required fields\"")
-    public void createUserOnlyWithAllFields(){
-        given()
-                .header("Content-type", "application/json")
-                .body(json)
-                .post(POST_CREATE_USER)
-                .then().statusCode(statusCode).and().assertThat().body("message",equalTo(message));
+    @Description("Проверка что при POST-запросе по ручке /api/auth/register возвращается код 403 и в BODY ответа message: Email, password and name are required fields")
+    public void createUserOnlyWithAllFields() {
+         ValidatableResponse  response =  userClient.createAndReturnResponse(user);
+
+         int actualStatusCode = response.extract().statusCode();
+         String actualMessage = response.extract().body().path("message");
+
+         assertEquals(NOT_ENOUGH_DATA, actualMessage);
+         assertEquals("Incorrect status code", SC_FORBIDDEN, actualStatusCode);
     }
 }
