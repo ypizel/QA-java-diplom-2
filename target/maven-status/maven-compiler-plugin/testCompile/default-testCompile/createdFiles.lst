@@ -1,0 +1,17 @@
+change_data_tests\ChangePasswordTest.class
+CreateUserOnlyWithAllFieldsTest.class
+LoginWithWrongEmailOrPasswordTest.class
+change_data_tests\ChangeToExistingEmailReturn403.class
+change_data_tests\ChangeDataWithoutAuthTest.class
+BaseApiTest.class
+make_order_tests\MakeOrderWithIngredients.class
+change_data_tests\ChangeEmailTest.class
+make_order_tests\MakeOrderWithWrongIngredientHash.class
+GetOrderTest.class
+make_order_tests\MakeOrderWithAuthTest.class
+CreateUserTest.class
+make_order_tests\MakeOrderWithNoIngredients.class
+change_data_tests\ChangeNameTest.class
+LoginTest.class
+make_order_tests\MakeOrderWithNoAuth.class
+make_order_tests\BaseMakeOrderTest.class
